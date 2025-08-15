@@ -57,58 +57,62 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
         Player player = event.getPlayer();
         ItemStack item = event.getItem();
         Action action = event.getAction();
-        Block block = null;
-        Crate crate = null;
+        Block block = event.getClickedBlock();
 
-        if (item != null && !item.getType().isAir()) {
-            crate = this.manager.getCrateByItem(item);
-        }
-        if (crate == null) {
-            item = null;
-            block = event.getClickedBlock();
-            if (block == null) return;
 
-            crate = this.manager.getCrateByBlock(block);
-        }
-        if (crate == null) {
-            return;
-        }
+        plugin.runTaskAsync(task -> {
+            Crate crate = null;
 
-        event.setUseItemInHand(Event.Result.DENY);
-
-        // Do not deny left click interactions for adventure gamemode to prevent interaction spam when key is held.
-        if (player.getGameMode() != GameMode.ADVENTURE || action == Action.RIGHT_CLICK_BLOCK) {
-            event.setUseInteractedBlock(Event.Result.DENY);
-        }
-
-        if (event.getHand() != EquipmentSlot.HAND) return;
-
-        ClickType clickType = ClickType.from(action, player.isSneaking());
-        InteractType clickAction = Config.getCrateClickAction(clickType);
-        if (clickAction == null) return;
-
-        // Uh, adventure gamemode triggers LEFT_CLICK interaction on interactable blocks together with RIGHT_CLICK interaction.
-        if (player.getGameMode() == GameMode.ADVENTURE && block != null && block.getType().isInteractable()) {
-            if (action == Action.RIGHT_CLICK_BLOCK) {
-                this.adventureFix.add(player.getUniqueId());
+            if (item != null && !item.getType().isAir()) {
+                crate = this.manager.getCrateByItem(item);
             }
-            else if (action == Action.LEFT_CLICK_BLOCK && this.adventureFix.remove(player.getUniqueId())) {
-                return;
-            }
-        }
 
-        // We don't need cooldown check & apply when previewing crates from GUIs or commands. Only for world interaction.
-        if (clickAction == InteractType.CRATE_PREVIEW && crate.isPreviewEnabled()) {
-            if (this.manager.hasPreviewCooldown(player)) {
-                Lang.CRATE_PREVIEW_ERROR_COOLDOWN.getMessage().send(player, replacer -> replacer
-                    .replace(Placeholders.GENERIC_TIME, TimeFormats.formatDuration(this.manager.getPreviewCooldown(player), TimeFormatType.LITERAL))
-                );
-                return;
+            if (crate == null && block != null) {
+                crate = this.manager.getCrateByBlock(block);
             }
-            this.manager.setPreviewCooldown(player);
-        }
 
-        this.manager.interactCrate(player, crate, clickAction, item, block);
+            if (crate == null) return;
+
+
+            Crate finalCrate = crate;
+            plugin.getScheduler().runTask(plugin, () -> {
+                event.setUseItemInHand(Event.Result.DENY);
+
+                // Do not deny left click interactions for adventure gamemode to prevent interaction spam when key is held.
+                if (player.getGameMode() != GameMode.ADVENTURE || action == Action.RIGHT_CLICK_BLOCK) {
+                    event.setUseInteractedBlock(Event.Result.DENY);
+                }
+
+                if (event.getHand() != EquipmentSlot.HAND) return;
+
+                ClickType clickType = ClickType.from(action, player.isSneaking());
+                InteractType clickAction = Config.getCrateClickAction(clickType);
+                if (clickAction == null) return;
+
+                // Uh, adventure gamemode triggers LEFT_CLICK interaction on interactable blocks together with RIGHT_CLICK interaction.
+                if (player.getGameMode() == GameMode.ADVENTURE && block != null && block.getType().isInteractable()) {
+                    if (action == Action.RIGHT_CLICK_BLOCK) {
+                        this.adventureFix.add(player.getUniqueId());
+                    } else if (action == Action.LEFT_CLICK_BLOCK && this.adventureFix.remove(player.getUniqueId())) {
+                        return;
+                    }
+                }
+
+                // We don't need cooldown check & apply when previewing crates from GUIs or commands. Only for world interaction.
+                if (clickAction == InteractType.CRATE_PREVIEW && finalCrate.isPreviewEnabled()) {
+                    if (this.manager.hasPreviewCooldown(player)) {
+                        Lang.CRATE_PREVIEW_ERROR_COOLDOWN.getMessage().send(player, replacer ->
+                                replacer.replace(Placeholders.GENERIC_TIME,
+                                        TimeFormats.formatDuration(this.manager.getPreviewCooldown(player), TimeFormatType.LITERAL))
+                        );
+                        return;
+                    }
+                    this.manager.setPreviewCooldown(player);
+                }
+
+                this.manager.interactCrate(player, finalCrate, clickAction, item, block);
+            });
+        });
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
