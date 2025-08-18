@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -22,36 +22,49 @@
     </distributionManagement>
 
     <repositories>
+        <!-- Spigot repo -->
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
 
+        <!-- NightExpress releases -->
         <repository>
             <id>nightexpress-releases</id>
             <url>https://repo.nightexpressdev.com/releases</url>
         </repository>
 
+        <!-- ProtocolLib repo -->
         <repository>
             <id>dmulloy2-repo</id>
             <url>https://repo.dmulloy2.net/repository/public/</url>
         </repository>
 
+        <!-- JitPack repo -->
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
 
+        <!-- PlaceholderAPI repo -->
         <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
 
+        <!-- Maven Central -->
         <repository>
-            <id>maven</id>
+            <id>maven-central</id>
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
 
+        <!-- Mojang libraries -->
+        <repository>
+            <id>mojang</id>
+            <url>https://libraries.minecraft.net/</url>
+        </repository>
+
+        <!-- CodeMC public repo -->
         <repository>
             <id>codemc-repo</id>
             <url>https://repo.codemc.io/repository/maven-public/</url>
@@ -59,6 +72,7 @@
     </repositories>
 
     <dependencies>
+        <!-- Spigot API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
@@ -66,18 +80,36 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Mojang Brigadier -->
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>brigadier</artifactId>
+            <version>1.0.18</version>
+        </dependency>
+
+        <!-- Paper API -->
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.21.4-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- NightCore -->
         <dependency>
             <groupId>su.nightexpress.nightcore</groupId>
             <artifactId>main</artifactId>
             <version>2.7.12</version>
         </dependency>
 
+        <!-- EconomyBridge -->
         <dependency>
             <groupId>su.nightexpress.economybridge</groupId>
             <artifactId>economy-bridge</artifactId>
             <version>1.2.1</version>
         </dependency>
 
+        <!-- ProtocolLib -->
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
@@ -85,6 +117,7 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- PacketEvents -->
         <dependency>
             <groupId>com.github.retrooper</groupId>
             <artifactId>packetevents-spigot</artifactId>
@@ -92,6 +125,7 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- PlaceholderAPI -->
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
@@ -103,9 +137,8 @@
     <build>
         <resources>
             <resource>
-                <directory>src/main/resources</directory> <!-- (your resources folder location) -->
-                <filtering>true
-                </filtering> <!-- this is the important part, it's what replaces, filters, all placeholders in the resources folder (such as ${project.version} in plugin.yml) -->
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
             </resource>
         </resources>
         <plugins>

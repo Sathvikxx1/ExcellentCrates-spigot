@@ -75,7 +75,8 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
 
 
             Crate finalCrate = crate;
-            plugin.getScheduler().runTask(plugin, () -> {
+
+            plugin.runTask(task1 -> {
                 event.setUseItemInHand(Event.Result.DENY);
 
                 // Do not deny left click interactions for adventure gamemode to prevent interaction spam when key is held.

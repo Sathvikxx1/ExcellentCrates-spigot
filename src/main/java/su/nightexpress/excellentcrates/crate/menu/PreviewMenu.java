@@ -76,6 +76,7 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
     @Override
     @NotNull
     public MenuFiller<Reward> createFiller(@NotNull MenuViewer viewer) {
+
         Player player = viewer.getPlayer();
         Crate crate = this.getLink(player).getCrate();
         //CrateUser user = plugin.getUserManager().getUserData(player);
@@ -143,79 +144,79 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
 
     @Override
     public void loadConfiguration(@NotNull FileConfig config, @NotNull MenuLoader loader) {
-        this.hideUnavailable = ConfigValue.create("Reward.Hide_Unavailable",
-            true,
-            "When enabled, displays only rewards that can be rolled out for a player."
-        ).read(config);
+            this.hideUnavailable = ConfigValue.create("Reward.Hide_Unavailable",
+                    true,
+                    "When enabled, displays only rewards that can be rolled out for a player."
+            ).read(config);
 
-        this.rewardSlots = ConfigValue.create("Reward.Slots",
-            new int[] {10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34}
-        ).read(config);
+            this.rewardSlots = ConfigValue.create("Reward.Slots",
+                    new int[]{10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34}
+            ).read(config);
 
-        this.rewardName = ConfigValue.create("Reward.Name",
-            REWARD_NAME
-        ).read(config);
+            this.rewardName = ConfigValue.create("Reward.Name",
+                    REWARD_NAME
+            ).read(config);
 
-        this.rewardLore = ConfigValue.create("Reward.Lore.Default", Lists.newList(
-            REWARD_DESCRIPTION,
-            EMPTY_IF_ABOVE,
-            LIMITS,
-            NO_PERMISSION,
-            EMPTY_IF_ABOVE,
-            DARK_GRAY.wrap(WHITE.wrap(REWARD_RARITY_NAME) + " ┃┃ " + GREEN.wrap(REWARD_ROLL_CHANCE + "%"))
-        )).read(config);
+            this.rewardLore = ConfigValue.create("Reward.Lore.Default", Lists.newList(
+                    REWARD_DESCRIPTION,
+                    EMPTY_IF_ABOVE,
+                    LIMITS,
+                    NO_PERMISSION,
+                    EMPTY_IF_ABOVE,
+                    DARK_GRAY.wrap(WHITE.wrap(REWARD_RARITY_NAME) + " ┃┃ " + GREEN.wrap(REWARD_ROLL_CHANCE + "%"))
+            )).read(config);
 
-        this.noPermissionLore = ConfigValue.create("Reward.Lore.No_Permission", Lists.newList(
-            GRAY.wrap(RED.wrap("✘") + " You don't have access to this reward.")
-        )).read(config);
+            this.noPermissionLore = ConfigValue.create("Reward.Lore.No_Permission", Lists.newList(
+                    GRAY.wrap(RED.wrap("✘") + " You don't have access to this reward.")
+            )).read(config);
 
-        this.limitsLore = ConfigValue.create("Reward.Lore.Limits.Info", Lists.newList(
-            RED.wrap(BOLD.wrap("Limits:")),
-            PERSONAL_LIMITS,
-            SERVER_LIMITS
-        )).read(config);
+            this.limitsLore = ConfigValue.create("Reward.Lore.Limits.Info", Lists.newList(
+                    RED.wrap(BOLD.wrap("Limits:")),
+                    PERSONAL_LIMITS,
+                    SERVER_LIMITS
+            )).read(config);
 
-        this.personalLimitsLore = ConfigValue.create("Reward.Lore.Limits.Personal", Lists.newList(
-            GRAY.wrap(RED.wrap("→") + " Your limit: " + RED.wrap(GENERIC_AMOUNT) + "/" + RED.wrap(GENERIC_MAX))
-        )).read(config);
+            this.personalLimitsLore = ConfigValue.create("Reward.Lore.Limits.Personal", Lists.newList(
+                    GRAY.wrap(RED.wrap("→") + " Your limit: " + RED.wrap(GENERIC_AMOUNT) + "/" + RED.wrap(GENERIC_MAX))
+            )).read(config);
 
-        this.serverLimitsLore = ConfigValue.create("Reward.Lore.Limits.Server", Lists.newList(
-            GRAY.wrap(RED.wrap("→") + " Server limit: " + RED.wrap(GENERIC_AMOUNT) + "/" + RED.wrap(GENERIC_MAX))
-        )).read(config);
+            this.serverLimitsLore = ConfigValue.create("Reward.Lore.Limits.Server", Lists.newList(
+                    GRAY.wrap(RED.wrap("→") + " Server limit: " + RED.wrap(GENERIC_AMOUNT) + "/" + RED.wrap(GENERIC_MAX))
+            )).read(config);
 
-        loader.addHandler(new ItemHandler("open", (viewer, event) -> {
-            CrateSource source = this.getLink(viewer);
-            if (!source.hasItem() || !source.hasBlock()) return;
+            loader.addHandler(new ItemHandler("open", (viewer, event) -> {
+                CrateSource source = this.getLink(viewer);
+                if (!source.hasItem() || !source.hasBlock()) return;
 
-            Player player = viewer.getPlayer();
+                Player player = viewer.getPlayer();
 
-            this.runNextTick(() -> {
-                player.closeInventory();
-                plugin.getCrateManager().interactCrate(player, source.getCrate(), InteractType.CRATE_OPEN, source.getItem(), source.getBlock());
-            });
-        }, ItemOptions.builder().setVisibilityPolicy(viewer -> {
-            CrateSource source = this.getLink(viewer);
-            return source.hasItem() || source.hasBlock();
-        }).build()));
+                this.runNextTick(() -> {
+                    player.closeInventory();
+                    plugin.getCrateManager().interactCrate(player, source.getCrate(), InteractType.CRATE_OPEN, source.getItem(), source.getBlock());
+                });
+            }, ItemOptions.builder().setVisibilityPolicy(viewer -> {
+                CrateSource source = this.getLink(viewer);
+                return source.hasItem() || source.hasBlock();
+            }).build()));
 
-        loader.addDefaultItem(new NightItem(Material.BLACK_STAINED_GLASS_PANE).setHideTooltip(true).toMenuItem()
-            .setSlots(1,2,3,5,6,7,9,18,27,17,26,35,37,38,39,40,41,42,43));
+            loader.addDefaultItem(new NightItem(Material.BLACK_STAINED_GLASS_PANE).setHideTooltip(true).toMenuItem()
+                    .setSlots(1, 2, 3, 5, 6, 7, 9, 18, 27, 17, 26, 35, 37, 38, 39, 40, 41, 42, 43));
 
-        loader.addDefaultItem(new NightItem(Material.GRAY_STAINED_GLASS_PANE).setHideTooltip(true).toMenuItem()
-            .setSlots(0,4,8,36,44));
+            loader.addDefaultItem(new NightItem(Material.GRAY_STAINED_GLASS_PANE).setHideTooltip(true).toMenuItem()
+                    .setSlots(0, 4, 8, 36, 44));
 
-        loader.addDefaultItem(NightItem.asCustomHead("1daf09284530ce92ed2df2a62e1b05a11f1871f85ae559042844206d66c0b5b0")
-            .setDisplayName(LIGHT_YELLOW.wrap(BOLD.wrap("Milestones")))
-            .toMenuItem()
-            .setPriority(10)
-            .setSlots(4)
-            .setHandler(new ItemHandler("milestones", (viewer, event) -> {
-                this.runNextTick(() -> plugin.getCrateManager().openMilestones(viewer.getPlayer(), this.getLink(viewer)));
-            }, ItemOptions.builder().setVisibilityPolicy(viewer -> this.getLink(viewer).getCrate().hasMilestones()).build()))
-        );
+            loader.addDefaultItem(NightItem.asCustomHead("1daf09284530ce92ed2df2a62e1b05a11f1871f85ae559042844206d66c0b5b0")
+                    .setDisplayName(LIGHT_YELLOW.wrap(BOLD.wrap("Milestones")))
+                    .toMenuItem()
+                    .setPriority(10)
+                    .setSlots(4)
+                    .setHandler(new ItemHandler("milestones", (viewer, event) -> {
+                        this.runNextTick(() -> plugin.getCrateManager().openMilestones(viewer.getPlayer(), this.getLink(viewer)));
+                    }, ItemOptions.builder().setVisibilityPolicy(viewer -> this.getLink(viewer).getCrate().hasMilestones()).build()))
+            );
 
-        loader.addDefaultItem(MenuItem.buildExit(this, 40).setPriority(10));
-        loader.addDefaultItem(MenuItem.buildNextPage(this, 26).setPriority(10));
-        loader.addDefaultItem(MenuItem.buildPreviousPage(this, 18).setPriority(10));
+            loader.addDefaultItem(MenuItem.buildExit(this, 40).setPriority(10));
+            loader.addDefaultItem(MenuItem.buildNextPage(this, 26).setPriority(10));
+            loader.addDefaultItem(MenuItem.buildPreviousPage(this, 18).setPriority(10));
     }
 }

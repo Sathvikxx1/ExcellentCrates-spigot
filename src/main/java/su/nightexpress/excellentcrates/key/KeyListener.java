@@ -45,17 +45,20 @@ public class KeyListener extends AbstractListener<CratesPlugin> {
         if (event.useItemInHand() == Event.Result.DENY) return;
         if (event.useInteractedBlock() == Event.Result.DENY) return;
 
-        ItemStack item = event.getItem();
-        if (item != null && this.manager.isKey(item)) {
-            Player player = event.getPlayer();
-            Block clickedBlock = event.getClickedBlock();
-            if (clickedBlock != null && clickedBlock.getType().isInteractable() && !player.isSneaking()) {
-                return;
+        plugin.runTaskAsync(task -> {
+            ItemStack item = event.getItem();
+            if (item != null && this.manager.isKey(item)) {
+                Player player = event.getPlayer();
+                Block clickedBlock = event.getClickedBlock();
+                if (clickedBlock != null && clickedBlock.getType().isInteractable() && !player.isSneaking()) {
+                    return;
+                }
+                plugin.runTask(task1 -> {
+                    event.setUseItemInHand(Event.Result.DENY);
+                    event.setUseInteractedBlock(Event.Result.DENY);
+                });
             }
-
-            event.setUseItemInHand(Event.Result.DENY);
-            event.setUseInteractedBlock(Event.Result.DENY);
-        }
+        });
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
